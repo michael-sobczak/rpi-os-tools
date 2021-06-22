@@ -2,8 +2,11 @@ import argparse
 import os
 import requests
 import sys
+import zipfile
+import tempfile
 from typing import List
 from urllib.parse import urlparse
+import shutil
 
 from bs4 import BeautifulSoup
 
@@ -64,7 +67,7 @@ def get_image_release_url(release_url: str) -> str:
             return os.path.join(release_url, rurl)
 
 
-def download_file(url: str, destination_path: str, chunk_size: int = 8192, print_progress: bool = False):
+def download_raspios_image(url: str, destination_path: str, chunk_size: int = 8192, print_progress: bool = False):
     # NOTE the stream=True parameter below
     def pp(*args, **kwargs):
         if print_progress:
@@ -72,19 +75,35 @@ def download_file(url: str, destination_path: str, chunk_size: int = 8192, print
         else:
             pass
 
-    with requests.get(url, stream=True) as r:
-        r.raise_for_status()
-        num_chunks = int(r.headers.get("content-length")) / chunk_size
-        pp(0, num_chunks, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r")
-        with open(destination_path, 'wb') as f:
-            for i, chunk in enumerate(r.iter_content(chunk_size=chunk_size)):
-                # If you have chunk encoded response uncomment if
-                # and set chunk_size parameter to None.
-                #if chunk: 
-                f.write(chunk)
-                if print_progress:
-                    pp(i, num_chunks, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r")
-        pp(num_chunks, num_chunks, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r")
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        zip_download_dir = os.path.join(tmpdir, 'download')
+        os.makedirs(zip_download_dir)
+        zip_download_path = os.path.join(zip_download_dir, os.path.basename(destination_path))
+        zip_extract_dir = os.path.join(tmpdir, 'extract')
+        os.makedirs(zip_extract_dir)
+        
+        with requests.get(url, stream=True) as r:
+            r.raise_for_status()
+            num_chunks = int(r.headers.get("content-length")) / chunk_size
+            print('Downloading image...')
+            pp(0, num_chunks, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r")
+            with open(zip_download_path, 'wb') as f:
+                for i, chunk in enumerate(r.iter_content(chunk_size=chunk_size)):
+                    # If you have chunk encoded response uncomment if
+                    # and set chunk_size parameter to None.
+                    #if chunk: 
+                    f.write(chunk)
+                    if print_progress:
+                        pp(i, num_chunks, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r")
+            pp(num_chunks, num_chunks, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r")
+            print('Unzipping image...')
+            with zipfile.ZipFile(zip_download_path, 'r') as zip_ref:
+                zip_ref.extractall(zip_extract_dir)
+            print(os.listdir(zip_extract_dir))
+            print(f'Copying .img file to application storage {destination_path}...')
+            shutil.copyfile(os.path.join(zip_extract_dir, os.path.basename(destination_path)), destination_path)
+
     return destination_path
 
 
@@ -132,11 +151,10 @@ def main():
         sys.exit(1)
 
     download_url = get_download_url(args.version, args.release)
-    download_path = os.path.join(args.raspios_image_cache_dir, os.path.basename(urlparse(download_url).path))
-
+    download_path = os.path.join(args.raspios_image_cache_dir, os.path.basename(urlparse(download_url).path.replace('.zip', '.img')))
     if args.force_download or not os.path.exists(download_path):
         print(f'Downloading raspios:\n\tversion: {args.version}\n\trelease: {args.release}\n\turl: {download_url}\n\tpath: {download_path}')
-        download_file(download_url, 'test.zip', print_progress=True)
+        download_raspios_image(download_url, download_path, print_progress=True)
         print(f'Done!')
     else:
         print(f'Already downloaded!')
