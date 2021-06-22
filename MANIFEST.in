@@ -1,0 +1,2 @@
+recursive-include rpios_tools/scripts *.sh
+recursive-include rpios_tools/docker *

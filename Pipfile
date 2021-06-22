@@ -6,9 +6,11 @@ name = "pypi"
 [packages]
 requests = "*"
 beautifulsoup4 = "*"
+psutil = "*"
 
 [dev-packages]
 twine = "*"
+wheel = "*"
 
 [requires]
 python_version = "3.8"

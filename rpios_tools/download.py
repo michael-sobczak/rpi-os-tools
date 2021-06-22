@@ -107,6 +107,11 @@ def download_raspios_image(url: str, destination_path: str, chunk_size: int = 81
     return destination_path
 
 
+def get_download_path(cache_dir: str, version: str, release: str):
+    download_url = get_download_url(version, args)
+    os.path.join(args.raspios_image_cache_dir, os.path.basename(urlparse(download_url).path.replace('.zip', '.img')))
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--list-os-versions', action='store_true', help='List the available raspios versions available for download and exit')
@@ -151,7 +156,7 @@ def main():
         sys.exit(1)
 
     download_url = get_download_url(args.version, args.release)
-    download_path = os.path.join(args.raspios_image_cache_dir, os.path.basename(urlparse(download_url).path.replace('.zip', '.img')))
+    download_path = get_download_path()
     if args.force_download or not os.path.exists(download_path):
         print(f'Downloading raspios:\n\tversion: {args.version}\n\trelease: {args.release}\n\turl: {download_url}\n\tpath: {download_path}')
         download_raspios_image(download_url, download_path, print_progress=True)

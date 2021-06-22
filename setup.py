@@ -12,7 +12,7 @@ _LONG_DESCRIPTION = open('README.md', 'r').read()
 
 setup(
     name='rpios_tools',
-    version='0.2.3',
+    version='0.2.5',
     url=_REPO_URL,
     download_url='',
     license='MIT',
@@ -25,7 +25,6 @@ setup(
     keywords=['raspberry pi', 'raspbian', 'iot', 'rpi'],
     zip_safe=False,
     include_package_data=True,
-    platforms='any',
     install_requires=parse_requirements('requirements.txt'),
     classifiers=[
         'Intended Audience :: Developers',
@@ -35,6 +34,6 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
     entry_points = {
-        'console_scripts': ['rpios-dl=rpios_tools.download:main'],
+        'console_scripts': ['rpios-dl=rpios_tools.download:main', 'rpios-img=rpios_tools.customize:main'],
     }
 )

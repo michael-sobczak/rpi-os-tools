@@ -20,6 +20,7 @@ readme-renderer==29.0
 requests==2.25.1
 requests-toolbelt==0.9.1
 rfc3986==1.5.0
+-e git+git@github.com:michael-sobczak/rpi-os-tools.git@9ffd5b7bccafac6376133f81f247f7237d33fa3d#egg=rpios_tools
 six==1.16.0
 soupsieve==2.2.1
 toml==0.10.2
