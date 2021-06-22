@@ -34,6 +34,6 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
     entry_points = {
-        'console_scripts': ['rpios-dl=rpios_tools.download:main', 'rpios-img=rpios_tools.customize:main'],
+        'console_scripts': ['rpios-dl=rpios_tools.download:main', 'rpios-img=rpios_tools.customize:main', 'rpios-docker=rpios_tools.docker:main'],
     }
 )

@@ -22,7 +22,7 @@ ARG VERSION
 ENV raspios_version=${VERSION}
 
 ARG RELEASE
-ENV raspios_release=${VERSION}
+ENV raspios_release=${RELEASE}
 
 ENV image_dir=${OS_IMAGE_DIR}
 ENV output_dir=${IMAGE_OUTPUT_DIR}

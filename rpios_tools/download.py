@@ -109,7 +109,7 @@ def download_raspios_image(url: str, destination_path: str, chunk_size: int = 81
 
 def get_download_path(cache_dir: str, version: str, release: str):
     download_url = get_download_url(version, release)
-    os.path.join(cache_dir, os.path.basename(urlparse(download_url).path.replace('.zip', '.img')))
+    return os.path.join(cache_dir, os.path.basename(urlparse(download_url).path.replace('.zip', '.img')))
 
 
 def main():
@@ -119,6 +119,7 @@ def main():
     p.add_argument('--raspios-download-url', type=str, default=RASPIOS_DOWNLOAD_PAGE, help='URL to use as the base download page for the operating system')
     p.add_argument('--raspios-image-cache-dir', type=str, default=RASPIOS_IMAGE_CACHE_DIR, help='Directory to store the downloaded images in')
     p.add_argument('--force-download', action='store_true', help='by default download is skipped if file already exists on local machine')
+    p.add_argument('--hide-progress', action='store_true', help='hide download progress bar')
     p.add_argument('--version', type=str, help='version of the operating system to download')
     p.add_argument('--release', type=str, help='which release of the operating system version to download')
     args = p.parse_args()
@@ -159,7 +160,7 @@ def main():
     download_path = get_download_path(args.raspios_image_cache_dir, args.version, args.release)
     if args.force_download or not os.path.exists(download_path):
         print(f'Downloading raspios:\n\tversion: {args.version}\n\trelease: {args.release}\n\turl: {download_url}\n\tpath: {download_path}')
-        download_raspios_image(download_url, download_path, print_progress=True)
+        download_raspios_image(download_url, download_path, print_progress=not args.hide_progress)
         print(f'Done!')
     else:
         print(f'Already downloaded!')

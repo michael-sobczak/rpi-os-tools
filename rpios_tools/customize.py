@@ -8,6 +8,7 @@ import tempfile
 import uuid
 
 from .download import get_download_path
+from .utils import run
 
 SECTOR_SIZE = 512
 # sudo dd if=$IMAGE of=$SD_CARD_DEV bs=4m conv=sync
@@ -16,12 +17,6 @@ SECTOR_SIZE = 512
 # sudo losetup -o 272629760 /dev/loop8 2021-05-07-raspios-buster-armhf-lite.img
 # 
 
-def run(*args, capture_output: bool = True):
-    p = subprocess.run(args, capture_output=capture_output)
-    if capture_output:
-        return (p.stdout, p.stderr)
-    else:
-        return (None, None)
 
 def mount_raspios_image(image_path: str, mount_target: str, offset: int) -> str:
     device = f'/dev/loop{uuid.uuid4()[:4]}'
@@ -89,7 +84,7 @@ def main():
     p.add_argument('output_path', type=str, help='path to save the customized image to')
     p.add_argument('--raspios-image-cache-dir', type=str, help='path to image directory')
     args = p.parse_args()
-
+    print(args)
     image_path = get_download_path(args.raspios_image_cache_dir, args.version, args.release)
 
     customize_raspios_image(image_path, args.output_path)

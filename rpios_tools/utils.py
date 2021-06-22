@@ -1,3 +1,11 @@
+import subprocess
+
+def run(*args, capture_output: bool = True):
+    p = subprocess.run(args, capture_output=capture_output)
+    if capture_output:
+        return (p.stdout, p.stderr)
+    else:
+        return (None, None)
 
 
 # Print iterations progress                                                                                                                                
