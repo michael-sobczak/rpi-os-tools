@@ -5,7 +5,6 @@ from typing import List
 import os
 import shutil
 import tempfile
-import psutil
 import uuid
 
 from .download import get_download_path

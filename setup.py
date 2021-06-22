@@ -12,7 +12,7 @@ _LONG_DESCRIPTION = open('README.md', 'r').read()
 
 setup(
     name='rpios_tools',
-    version='0.2.5',
+    version='0.2.8',
     url=_REPO_URL,
     download_url='',
     license='MIT',
