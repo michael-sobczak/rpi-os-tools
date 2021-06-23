@@ -3,6 +3,7 @@ from .utils import run
 
 
 docker_tag = 'rpios-tools/imagebuilder:latest'
+IMAGE_CACHE_VOLUME = 'raspios-image-cache-volume'
 
 def build_docker(version: str, release: str):
     run(
@@ -18,12 +19,22 @@ def build_wheel():
     )
 
 
-def run_docker():
-    stdout, stderr = run(
-        'docker', 'run', '--privileged', docker_tag
+def docker_volume():
+    stdout, stderr, returncode = run(
+        'docker', 'inspect', IMAGE_CACHE_VOLUME
     )
-    print(stdout)
-    print(stderr)
+    if returncode == 1:
+        run(
+            'docker', 'volume', 'create', IMAGE_CACHE_VOLUME
+        )
+
+
+def run_docker():
+    stdout, stderr, returncode = run(
+        'docker', 'run', '--mount', f'source={IMAGE_CACHE_VOLUME},target=/images' '--privileged', docker_tag
+    )
+    print(stdout.decode('ascii'))
+    print(stderr.decode('ascii'))
 
 
 def main():
@@ -34,6 +45,8 @@ def main():
 
     print('packaging rpios_tools...')
     build_wheel()
+    print('checking for image cache docker Volume...')
+    docker_volume()
     print('building docker...')
     build_docker(args.version, args.release)
     print('running docker...')

@@ -3,9 +3,9 @@ import subprocess
 def run(*args, capture_output: bool = True):
     p = subprocess.run(args, capture_output=capture_output)
     if capture_output:
-        return (p.stdout, p.stderr)
+        return (p.stdout, p.stderr, p.returncode)
     else:
-        return (None, None)
+        return (None, None, p.returncode)
 
 
 # Print iterations progress                                                                                                                                
