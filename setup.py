@@ -12,7 +12,7 @@ _LONG_DESCRIPTION = open('README.md', 'r').read()
 
 setup(
     name='rpios_tools',
-    version='0.2.8',
+    version='0.3.0',
     url=_REPO_URL,
     download_url='',
     license='MIT',
@@ -34,6 +34,6 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
     entry_points = {
-        'console_scripts': ['rpios-dl=rpios_tools.download:main', 'rpios-img=rpios_tools.customize:main', 'rpios-docker=rpios_tools.docker:main'],
+        'console_scripts': ['rpios-dl=rpios_tools.download:main', 'rpios-img=rpios_tools.customize:main', 'rpios-publish=rpios_tools.docker:main'],
     }
 )
